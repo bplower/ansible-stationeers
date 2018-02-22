@@ -1,0 +1,11 @@
+[Unit]
+Description={{ service_description }}
+
+[Service]
+ExecStart="{{ base_directory }}/rocketstation_DedicatedServer.x86_64" -autostart -nographics -batchmode -basedirectory "{{ base_directory }}"
+WorkingDirectory={{ base_directory }}
+User={{ service_user }}
+Group={{ service_group }}
+
+[Install]
+WantedBy=multi-user.target

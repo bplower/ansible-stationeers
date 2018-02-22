@@ -1,0 +1,13 @@
+---
+# handlers file for stationeers
+
+- name: Reload Stationeers service (daemon_reload)
+  systemd:
+    name: "{{ service_name }}"
+    daemon_reload: yes
+
+- name: Restart Stationeers service
+  systemd:
+    name: "{{ service_name }}"
+    state: restarted
+  when: service_restart_permitted

@@ -1,0 +1,72 @@
+---
+# Create the user and group to run the stationeers server
+- name: "Create OS user for Stationeers"
+  user:
+    name: "{{ service_user }}"
+    state: present
+
+- name: "Create OS group for Stationeers"
+  group:
+    name: "{{ service_group }}"
+    state: present
+
+# Perpare/veryify the SteamCMD installation on the host
+- name: Check if system is i386
+  command: bash -c "dpkg --print-foreign-architectures | grep i386"
+  register: needs_i386
+  when: ansible_architecture != "i386"
+  changed_when: false
+  failed_when: needs_i386.stderr != ''
+
+- name: Add the i386 architecture if needed
+  command: dpkg --add-architecture i386
+  when: ansible_architecture != "i386" and needs_i386.rc == 1
+
+- name: Add the Multiverse repository
+  apt_repository:
+    repo: "{{item}}"
+    update_cache: false
+  with_items:
+  - 'deb http://archive.ubuntu.com/ubuntu {{ansible_distribution_release}} multiverse'
+  - 'deb-src http://archive.ubuntu.com/ubuntu {{ansible_distribution_release}} multiverse'
+  - 'deb http://archive.ubuntu.com/ubuntu {{ansible_distribution_release}}-updates multiverse'
+  - 'deb-src http://archive.ubuntu.com/ubuntu {{ansible_distribution_release}}-updates multiverse'
+
+- name: Check SteamCMD license agreement
+  fail:
+    msg: "You must accept the SteamCMD license by setting the variable 'accept_steamcmd_license: true'"
+  when: accept_steamcmd_license == False
+
+- name: Accept SteamCMD license agreement
+  debconf:
+    name: steamcmd
+    question: steam/question
+    value: I AGREE
+    vtype: select
+  when: accept_steamcmd_license
+
+- name: Install SteamCMD
+  apt:
+    pkg: steamcmd
+
+# Prepare/verify the Stationeers Dedicated server
+- name: Install Stationeers
+  command: bash -c "/usr/games/steamcmd +login anonymous +app_update 600760 validate +exit"
+  become: true
+  become_user: "{{ service_user }}"
+
+- name: Create default.ini file
+  template:
+    src: default.ini.j2
+    dest: /home/{{service_user}}/.steam/SteamApps/common/Stationeers Dedicated Server/default.ini
+
+# Create the service
+- name: Create service file
+  template:
+    src: service-template.service.j2
+    dest: /etc/systemd/system/{{ service_name }}.service
+  vars:
+    base_directory: /home/{{service_user}}/.steam/SteamApps/common/Stationeers Dedicated Server
+  notify:
+  - Reload Stationeers service (daemon_reload)
+  - Restart Stationeers service

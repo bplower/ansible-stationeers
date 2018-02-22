@@ -1,0 +1,31 @@
+---
+# defaults file for stationeers
+service_name: "stationeers"
+service_user: "stationeers"
+service_group: "stationeers"
+service_description: "Dedicated Stationeers server"
+service_restart_permitted: yes
+
+# SteamCMD
+accept_steamcmd_license: no # See the note about this in the README
+
+# # Stationeers runtime configs # TODO: These will be implemented soon
+# stationeers_autosaveinterval:
+# stationeers_creator:
+# stationeers_worldname:
+# stationeers_worldtype:
+# stationeers_loadworld:
+# stationeers_gameport:
+# stationeers_updateport:
+# stationeers_servername:
+# stationeers_basedirectory:
+
+# Stationeers default.ini configs
+stationeers_default_servername: sTATIONEERS
+stationeers_default_gameport: 27500
+stationeers_default_updateport: 27015
+stationeers_default_password:
+stationeers_default_mapname: BASE
+stationeers_default_description: Stationeers
+stationeers_default_maxplayers: 30
+stationeers_default_rconpassword: stationeers
