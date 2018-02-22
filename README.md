@@ -1,5 +1,7 @@
 # Stationeers
 
+[![Install from Ansible Galaxy](https://img.shields.io/badge/role-bplower.stationeers-blue.svg)](https://galaxy.ansible.com/bplower/stationeers/)
+
 A role for creating [Stationeers](https://stationeers.com/) servers.
 
 ## Requirements
@@ -145,7 +147,3 @@ You can set the rconn password via the default.ini settings:
 ## License
 
 MIT
-
-## Author Information
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
